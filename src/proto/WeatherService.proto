@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.weather.grpc";
+option java_outer_classname = "WeatherServiceProto";
+
+service WeatherService {
+  // gRPC method: client sends lat/lon → receives weather data
+  rpc GetWeather (WeatherRequest) returns (WeatherResponse);
+}
+
+message WeatherRequest {
+  string lat = 1;
+  string lon = 2;
+}
+
+message WeatherResponse {
+  string city = 1;
+  string country = 2;
+  string description = 3;
+  float temperature = 4;
+  float humidity = 5;
+  float windSpeed = 6;
+}

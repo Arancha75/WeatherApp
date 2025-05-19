@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.5'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.google.protobuf' version '0.9.4'  // ✅ gRPC Plugin
 }
 
 group = 'com.weather.app'
@@ -17,14 +18,52 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	grpcVersion = '1.63.0'
+	protobufVersion = '3.25.1'
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 	implementation 'org.json:json:20240303'
+
+	// ✅ gRPC + Protobuf dependencies
+	implementation "io.grpc:grpc-netty:${grpcVersion}"
+	implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+	implementation "io.grpc:grpc-stub:${grpcVersion}"
+	compileOnly "org.apache.tomcat:annotations-api:6.0.53"
+	implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
+
+	// unit Testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.mockito:mockito-core:5.12.0'
+	testImplementation 'org.mockito:mockito-inline:5.2.0'
+	testImplementation 'org.mockito:mockito-junit-jupiter:5.12.0'
+	testImplementation 'org.assertj:assertj-core:3.25.3'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+}
+
+protobuf {
+	protoc {
+		artifact = "com.google.protobuf:protoc:${protobufVersion}"
+	}
+	plugins {
+		grpc {
+			artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+		}
+	}
+	generateProtoTasks {
+		all().each { task ->
+			task.plugins {
+				grpc {}
+			}
+		}
+	}
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
