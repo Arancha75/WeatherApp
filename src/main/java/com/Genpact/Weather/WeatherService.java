@@ -20,7 +20,7 @@ public class WeatherService {
         String url = String.format("%s?lat=%f&lon=%f&appid=%s", BASE_URL, lat, lon, API_KEY);
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            if (response.gebrtStatusCode() == HttpStatus.OK) {
+            if (response.getStatusCode() == HttpStatus.OK) {
                 return response.getBody();
             } else {
                 throw new RuntimeException("Failed to fetch weather data");
