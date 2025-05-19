@@ -2,6 +2,8 @@ package com.Genpact.Weather;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -79,19 +81,29 @@ public class WeatherDetails {
     }
 
     public String getTemp() {
-        return main.temp;
+        return convertToCelsius(main.temp);
     }
 
     public String getFeelsLike() {
-        return main.feelsLike;
+        return convertToCelsius(main.feelsLike);
+    }
+
+    private String convertToCelsius(String kelvinString) {
+        try{
+            double kelvin = Double.parseDouble(kelvinString);
+            double celsius = kelvin-273.15;
+            return new DecimalFormat("#.##").format(celsius);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getTempMin() {
-        return main.tempMin;
+        return convertToCelsius(main.tempMin);
     }
 
     public String getTempMax() {
-        return main.tempMax;
+        return convertToCelsius(main.tempMax);
     }
 
     public String getWindSpeed() {
@@ -108,9 +120,11 @@ public class WeatherDetails {
 
     private String convertTimestampToISO8601(long timestamp) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        sdf.setTimeZone(TimeZone.getTimeZone("IST"));
         return sdf.format(new Date(timestamp * 1000));
     }
+
+
 
     // Method to get the transformed response
     public static WeatherResponse getTransformedResponse(WeatherDetails  details) {
